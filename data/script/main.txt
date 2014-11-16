@@ -1,0 +1,1624 @@
+//-----------------------Define Missions-----------------------\\
+DEFINE MISSIONS 0
+//DEFINE MISSION {ID} 0 AT {LABEL} @
+DEFINE EXTERNAL_SCRIPTS 0 // Use -1 in order not to compile AAA script
+//DEFINE SCRIPT {NAME}  AT {LABEL} @
+DEFINE UNKNOWN_EMPTY_SEGMENT 0
+DEFINE UNKNOWN_THREADS_MEMORY 0
+
+//-----------------------Initial Set-up-----------------------\\
+{$VERSION 3.0.0000}
+var
+ $PLAYER_CHAR: Player
+end // var 
+03A4: name_thread 'MAIN'
+0004: $INTRO = 1
+01F0: set_max_wanted_level_to 0                                                                                         // Max Wanted Level, Wasted
+0111: toggle_wasted_busted_check 0                                                                                      // Busted Check, Game Time,
+00C0: set_current_time_hours_to 23 minutes_to 0                                                                         // Player Spawn, Weather,
+04E4: unknown_refresh_game_renderer_at -2520.8984 -624.3306 132.7827                                                    // Player Clothing, Initial
+03CB: set_rendering_origin_at -2520.8984 -624.3306 132.7827                                                             // Interior, Respawn Zones,
+0053: $PLAYER_CHAR = create_player #NULL at -2520.8984 -624.3306 132.7827                                               // Weapon Spawns and Car
+01F5: $PLAYER_ACTOR = create_player_actor $PLAYER_CHAR                                                                  // Spawns are set here.
+07AF: $PLAYER_GROUP = player $PLAYER_CHAR group
+0001: wait 0 ms 
+087B: set_player $PLAYER_CHAR clothes_texture "PLAYER_FACE" model "HEAD" body_part 1                                    // Head
+087B: set_player $PLAYER_CHAR clothes_texture "SUIT1TRBLK2" model "SUIT1TR" body_part 2                                 // Legs
+087B: set_player $PLAYER_CHAR clothes_texture "SHOEDRESSBLK" model "SHOE" body_part 3                                   // Shoes
+087B: set_player $PLAYER_CHAR clothes_texture "TUXEDO" model "SUIT2" body_part 0                                        // Torso
+070D: rebuild_player $PLAYER_CHAR 
+01B4: toggle_player $PLAYER_CHAR can_move 0 
+016A: fade 1 time 0 
+04BB: select_interior 0 
+0629: change_integer_stat 181 to 4
+0629: change_integer_stat 69 to 10000
+0629: change_integer_stat 70 to 10000
+0629: change_integer_stat 71 to 10000
+0629: change_integer_stat 72 to 10000
+0629: change_integer_stat 73 to 10000
+0629: change_integer_stat 74 to 10000
+0629: change_integer_stat 75 to 10000
+0629: change_integer_stat 76 to 10000
+0629: change_integer_stat 77 to 10000
+0629: change_integer_stat 78 to 10000
+0629: change_integer_stat 79 to 10000
+055E: set_player $PLAYER_CHAR max_health += 250 
+055F: set_player $PLAYER_CHAR max_armour += 250
+Actor.Health($PLAYER_ACTOR) = 250
+Actor.Armour($PLAYER_ACTOR) = 250 
+016C: restart_if_wasted_at 2027.77 -1420.52 15.99 angle 137.0 town_number 0 
+016D: restart_if_busted_at 1550.68 -1675.49 14.51 angle 90.0 town_number 0
+0180: set_on_mission_flag_to $ONMISSION // Note: your missions have to use the variable defined here
+
+0004: $DEFAULT_WAIT_TIME = 250
+0004: $MYTH_YETI_ENABLED = 0  // Myth 1 -- CODED
+0004: $MYTH_LEATHERFACE_ENABLED = 0 // Myth 2 -- CODED
+0004: $MYTH_LIZARD_ENABLED = 0  // Myth 3
+0004: $MYTH_SAMARA_ENABLED = 0 // Myth 4
+0004: $MYTH_PIGGSY_ENABLED = 0  // Myth 5
+0004: $MYTH_JASON_ENABLED = 0 // Myth 6
+0004: $MYTH_BIGFOOT_ENABLED = 0 // Myth 7
+
+03E6: remove_text_box
+014B: $BASE_INFERNUS = init_parked_car_generator #INFERNUS color 0 0 1 alarm 0 door_lock 0 0 10000 at 213.9012 1857.776 13.1406 angle 179.3499
+014C: set_parked_car_generator $BASE_INFERNUS cars_to_generate_to 101
+014B: $BASE_HUNTER = init_parked_car_generator #HUNTER color 0 0 1 alarm 0 door_lock 0 0 10000 at -2571.9485 -638.5665 152.1797 angle 178.8632
+014C: set_parked_car_generator $BASE_HUNTER cars_to_generate_to 101
+Object.Init($BASE_GATE, 969, -2486.26, -620.5, 131.672)
+0177: set_object $BASE_GATE Z_angle_to 90.0
+
+//-----------------------Intro Cinematic-----------------------\\
+//------------Bigfoot Walks to a Cliff and the base----------\\
+//--------------- is Shown with a text intro---------------\\                                                      // Set the INTRO flag to avoid threads running early
+Model.Load(#WASHING)
+01B4: toggle_player $PLAYER_CHAR can_move 1                                                                        // Load Infernus ready for the car spawn
+00A1: put_actor $PLAYER_ACTOR at -1057.7583 -2395.9648 69.8398                                                     // Put the player in position to
+0337: set_actor $PLAYER_ACTOR visibility 0                                                                         // force the world to be loaded.
+04E4: unknown_refresh_game_renderer_at -1047.7583 -2395.9648 69.8398                                               // Also set the player invisible
+03CB: set_rendering_origin_at -1047.7583 -2395.9648 69.8398                                                        // to hide this.
+Camera.SetPosition(-1044.9736, -2436.4426, 62.6236, 0.0, 0.0, 0.0)
+Camera.PointAt(-1044.0763, -2407.3308, 71.2903, 2)
+01B6: set_weather 8
+02A3: enable_widescreen 1
+023C: load_special_actor 'BIGFOOT' as 1 // models 290-299                                                          // Load the Bigfoot model and
+wait 1000                                                                                                          // spawn the Bigfoot actor. Set his
+009A: 1@ = create_actor_pedtype 23 model #SPECIAL01 at -1047.7583 -2395.9648 69.8398                               // walk style and make him walk
+0173: set_actor 1@ Z_angle_to 176.0504                                                                             // forward to the rock edge.
+0245: set_actor 1@ walk_style_to "OLDMAN" 
+07CD: AS_actor 1@ walk_to -1049.547 -2404.1099 70.1173 stop_with_angle 176.9904 within_radius 0.1
+wait 10000
+043C: disable_sounds_after_fade 0
+fade 0 1000
+wait 1000
+Actor.DestroyInstantly(1@)                                                                                         // Remove Bigfoot and destroy
+01C2: remove_references_to_actor 1@ // Like turning an actor into a random pedestrian                              // references. Unload model.
+0296: unload_special_actor 1
+04E4: unknown_refresh_game_renderer_at -2520.8984 -624.3306 132.7827                                               // Load the area and put the
+03CB: set_rendering_origin_at -2520.8984 -624.3306 132.7827                                                        // player into spawn position.
+wait 10
+00A1: put_actor $PLAYER_ACTOR at -2521.1067 -621.5524 132.7356
+0337: set_actor $PLAYER_ACTOR visibility 1
+fade 1 2000
+Car.Create(5@, #WASHING, -2527.6492, -602.2081, 132.0808)                                                         // Spawn a one-time Infernus because
+Car.SetImmunities(5@, 1, 1, 1, 1, 1)
+0224: set_car 5@ health_to 10000
+0175: set_car 5@ Z_angle_to 179.9809                                                                               // of the car generator not working
+0229: set_car 5@ primary_color_to 0 secondary_color_to 0                                                           // yet. 
+03F5: set_car 5@ apply_damage_rules 0
+Car.RemoveReferences(5@)
+Camera.SetPosition(-2551.4158, -599.9936, 148.4455, 0.0, 0.0, 0.0)                                                 // Begin the text part of the
+Camera.PointAt(-2511.6396, -619.1014, 133.7909, 2)                                                                 // intro.                                                               // Begin the text part of the
+054C: use_GXT_table 'XFILES'                                                                                       
+00BC: show_text_highpriority GXT 'INTRO01' time 5000 flag 1  // Welcome to X-Files IV by James227uk.
+wait 5000
+//REMOVED FOR DEBUGGING
+00BC: show_text_highpriority GXT 'INTRO02' time 5000 flag 1  // This is the Prospero Headquarters, your central base of operations.
+wait 5000
+00BC: show_text_highpriority GXT 'INTRO03' time 7000 flag 1  // The Headquarters will provide you with help, a place to save the game, weapons, and vehicles.
+wait 7000
+00BC: show_text_highpriority GXT 'INTRO04' time 7000 flag 1  // As a government operative, you will not be wanted by the police for breaking the law unless in extreme circumstances.
+wait 7000
+// - BRACKET END
+00BC: show_text_highpriority GXT 'INTRO05' time 3000 flag 1  // Good Luck.
+wait 3000
+02A3: enable_widescreen 0                                                                                          // Disable cinematic view, restore
+Camera.Restore_WithJumpCut()                                                                                       // the camera and unload the Infernus
+Camera.SetBehindPlayer()                                                                                           // model as it is no longer needed. Also
+Model.Destroy(#WASHING)                                                                                            // set ONMISSION to 0 so threads run.
+0004: $INTRO = 0
+043C: disable_sounds_after_fade 1
+
+// // Define Threads Here
+create_thread @INTROTRUTH
+create_thread @DEBUG_MINIGUN //-- DEBUG ONLY
+create_thread @HUJINIS
+
+create_thread @ACTIVATION_BIGFOOT
+create_thread @ACTIVATION_YETI
+create_thread @ACTIVATION_JASON
+create_thread @ACTIVATION_SAMARA
+create_thread @ACTIVATION_PIGGSY
+create_thread @ACTIVATION_LIZARD
+create_thread @ACTIVATION_LEATHERFACE
+
+create_thread @BASE_GATE
+create_thread @BASE_PICKUPS
+create_thread @BASE_HELP_YETI
+create_thread @BASE_HELP_LEATHERFACE
+create_thread @BASE_WEAPONS_VENDOR
+create_thread @BASE_TRANSPORT
+
+create_thread @STARGATE_BASE
+
+create_thread @MYTH_YETI
+create_thread @MYTH_LEATHERFACE
+create_thread @MYTH_LIZARD
+
+:MAIN_LOOP
+0001: wait $DEFAULT_WAIT_TIME ms
+00BF: $TIME_HOURS = current_time_hours, $TIME_MINS = current_time_minutes
+0002: jump @MAIN_LOOP 
+
+// // Write Threads here
+
+//--INTROTRUTH: Truth informs CJ about the Yeti--\\ 
+:INTROTRUTH
+wait 0
+    if and
+        0038:   $INTRO == 0
+        Player.Defined($PLAYER_CHAR)
+    jf @INTROTRUTH
+023C: load_special_actor 'TRUTH' as 1
+
+:INTROTRUTH_01
+wait 0
+    if 
+        Model.Available(#SPECIAL01)
+    jf @INTROTRUTH_01
+009A: $INTRO_TRUTH = create_actor_pedtype 23 model #SPECIAL01 at -2490.1018 -623.3849 132.65
+0173: set_actor $INTRO_TRUTH Z_angle_to 88.9876
+02A9: set_actor $INTRO_TRUTH immune_to_nonplayer 1
+02AB: set_actor $INTRO_TRUTH immunities BP 1 FP 1 EP 1 CP 1 MP 1
+0446: set_actor $INTRO_TRUTH immune_to_headshots 0
+03BC: 10@ = create_sphere_at -2491.3113 -623.2177 132.6535 radius 1.0 
+wait 1000
+04D7: set_actor $INTRO_TRUTH locked 1
+
+:INTROTRUTH_1
+wait 0
+    if
+            00FF:   actor $PLAYER_ACTOR sphere 1 in_sphere -2491.3113 -623.2177 132.6535 radius 1.0 1.0 1.0 on_foot    
+    jf @INTROTRUTH_2
+03BD: destroy_sphere 10@
+Player.CanMove($PLAYER_CHAR) = False
+074D: AS_actor $PLAYER_ACTOR turns_to_and_look_at_actor $INTRO_TRUTH timelimit 2000
+fade 0 1000
+02A3: enable_widescreen 1
+015F: set_camera_position -2494.8301 -620.579 132.7089 rotation 0.0 0.0 0.0
+Camera.PointAt(-2487.7964, -623.9264, 132.6286, 2)
+wait 1000
+fade 1 1000
+wait 1000
+054C: use_GXT_table 'XFILES'
+0677: AS_actor $INTRO_TRUTH chat_with_actor $PLAYER_ACTOR 1 1
+0605: actor $INTRO_TRUTH perform_animation_sequence "IDLE_CHAT" IFP_file "PED" 4.0 loop 1 0 0 0 time 30000 // versionA 
+00BC: show_text_highpriority GXT 'TRUTH01' time 5000 flag 1  // Ah CJ, glad you could make it.
+wait 5000
+00BC: show_text_highpriority GXT 'TRUTH02' time 10000 flag 1  // Locals are reporting signs of a Yeti in the mountains. I'd check it out myself but I've heard rumours of a Loch Ness Monster in Fisher's Lagoon.
+wait 10000
+00BC: show_text_highpriority GXT 'TRUTH03' time 5000 flag 1  // Maybe this Yeti would be a good place for you to start?
+wait 5000
+00BC: show_text_highpriority GXT 'TRUTH04' time 10000 flag 1  // Head down to Mount Chiliad and hunt it down. Don't forget to enter the HQ and arm yourself though, I'd hardly imagine that fist fighting this thing would be easy.
+wait 10000
+04D7: set_actor $INTRO_TRUTH locked 0
+05D3: AS_actor $INTRO_TRUTH goto_point -2479.2964 -623.6921 132.6562 mode 6 5000 ms // versionA
+Player.CanMove($PLAYER_CHAR) = True
+wait 5000
+fade 0 1000
+wait 500
+02A3: enable_widescreen 0
+Camera.Restore_WithJumpCut()
+Camera.SetBehindPlayer()
+wait 500
+fade 1 1000
+wait 3000
+Actor.DestroyInstantly($INTRO_TRUTH)
+Actor.RemoveReferences($INTRO_TRUTH)
+0296: unload_special_actor 1
+0004: $MYTH_YETI_ENABLED = 1
+0394: play_music 2
+end_thread
+
+:INTROTRUTH_2
+wait 0
+    if
+        Actor.Dead($INTRO_TRUTH)
+    jf @INTROTRUTH_1
+Actor.RemoveReferences($INTRO_TRUTH)
+0296: unload_special_actor 1
+0004: $MYTH_YETI_ENABLED = 1
+end_thread
+
+
+//-----------------------Myth Activation Checks-----------------------\\
+:ACTIVATION_BIGFOOT
+wait 20000
+jump @ACTIVATION_BIGFOOT_1
+
+:ACTIVATION_BIGFOOT_1
+wait 0
+    if
+        0038:   $MYTH_BIGFOOT_ENABLED == 1
+    jf @ACTIVATION_BIGFOOT_1 
+end_thread
+//---
+:ACTIVATION_YETI
+wait 20000
+jump @ACTIVATION_YETI_1
+
+:ACTIVATION_YETI_1
+wait 0
+    if
+        0038:   $MYTH_YETI_ENABLED == 1
+    jf @ACTIVATION_YETI_1
+054C: use_GXT_table 'XFILES'
+0512: show_permanent_text_box 'UNLYETI'  // Myth Unlocked: Yeti. The Yeti is a creature which inhabits Mount Chilliad. It does not use a weapon, and might be vulnerable to heat.
+02A8: $MYTH_YETI_MARKER = create_marker 37 at -2315.2959 -1619.314 523.3173
+wait 10000
+03E6: remove_text_box
+//DEBUG ONLY
+wait 1000
+02A3: enable_widescreen 1
+054C: use_GXT_table 'XFILES'
+00BC: show_text_highpriority GXT 'XFHP1' time 5000 flag 1  // When you unlock a myth, an icon on the radar will appear showing you it's generic location.
+wait 5000 
+054C: use_GXT_table 'XFILES'
+00BC: show_text_highpriority GXT 'XFHP2' time 5000 flag 1  // This marker will not take you directly to the myth, but rather to it's near viscinity.
+wait 5000 
+054C: use_GXT_table 'XFILES'
+00BC: show_text_highpriority GXT 'XFHP3' time 5000 flag 1  // Search the location near the marker to find the myth.
+wait 5000
+054C: use_GXT_table 'XFILES'
+00BC: show_text_highpriority GXT 'XFHP4' time 5000 flag 1  // Or maybe it will find you...
+wait 5000 
+02A3: enable_widescreen 0
+// - BRACKET END
+end_thread
+//---
+:ACTIVATION_JASON
+wait 20000
+jump @ACTIVATION_JASON_1
+
+:ACTIVATION_JASON_1
+wait 0
+    if
+        0038:   $MYTH_JASON_ENABLED == 1
+    jf @ACTIVATION_JASON_1 
+end_thread
+//---
+:ACTIVATION_SAMARA
+wait 20000
+jump @ACTIVATION_SAMARA_1
+
+:ACTIVATION_SAMARA_1
+wait 0
+    if
+        0038:   $MYTH_SAMARA_ENABLED == 1
+    jf @ACTIVATION_SAMARA_1 
+end_thread
+//---
+:ACTIVATION_PIGGSY
+wait 20000
+jump @ACTIVATION_PIGGSY_1
+
+:ACTIVATION_PIGGSY_1
+wait 0
+    if
+        0038:   $MYTH_PIGGSY_ENABLED == 1
+    jf @ACTIVATION_PIGGSY_1 
+end_thread
+//---
+:ACTIVATION_LIZARD
+wait 20000
+jump @ACTIVATION_LIZARD_1
+
+:ACTIVATION_LIZARD_1
+wait 0
+    if
+        0038:   $MYTH_LIZARD_ENABLED == 1
+    jf @ACTIVATION_LIZARD_1
+wait 5000
+054C: use_GXT_table 'XFILES'
+0512: show_permanent_text_box 'UNLLZRD'
+02A8: $MYTH_LIZARD_MARKER = create_marker 37 at 2646.9641 2733.6877 10.8203
+wait 10000
+03E6: remove_text_box   
+end_thread
+//---
+:ACTIVATION_LEATHERFACE
+wait 20000
+jump @ACTIVATION_LEATHERFACE_1
+
+:ACTIVATION_LEATHERFACE_1
+wait 0
+    if
+        0038:   $MYTH_LEATHERFACE_ENABLED == 1
+    jf @ACTIVATION_LEATHERFACE_1 
+wait 5000
+054C: use_GXT_table 'XFILES'
+0512: show_permanent_text_box 'UNLLFC'
+02A8: $MYTH_LEATHERFACE_MARKER = create_marker 37 at 2138.4714 -96.8419 2.2607
+wait 10000
+03E6: remove_text_box
+end_thread
+
+
+//-----------------------Prospero Base Threads-----------------------\\
+:BASE_GATE
+wait 0
+    if
+        03CA:   object $BASE_GATE exists
+    jf @BASE_GATE
+
+:BASE_GATE_1
+wait 0
+    if
+        00FE:   actor $PLAYER_ACTOR sphere 0 in_sphere -2486.26 -611.756 131.672 radius 10.0 10.0 10.0 
+    jf @BASE_GATE_1
+
+:BASE_GATE_1_2
+wait 0
+    if
+        034E: move_object $BASE_GATE to -2486.26 -620.5 127.672 speed 0.1 0.1 0.1 flag 1
+    jf @BASE_GATE_1_2
+jump @BASE_GATE_2
+
+:BASE_GATE_2
+wait 0
+    if
+        80FE:   not actor $PLAYER_ACTOR sphere 0 in_sphere -2486.26 -611.756 131.672 radius 10.0 10.0 10.0
+    jf @BASE_GATE_2
+
+:BASE_GATE_2_2
+    if
+        034E: move_object $BASE_GATE to -2486.26 -620.5 131.672 speed 0.0 0.0 0.1 flag 1
+    jf @BASE_GATE_2_2
+jump @BASE_GATE_1
+//---
+:BASE_PICKUPS
+wait 15000
+jump @BASE_PICKUPS
+
+:BASE_PICKUPS_1
+0213: $BASE_HEALTH_PICKUP = create_pickup #HEALTH type 2 at 349.826 161.6575 1019.9912
+end_thread
+//---
+:BASE_HELP_YETI
+wait 20000
+jump @BASE_HELP_YETI_1
+
+:BASE_HELP_YETI_1
+wait 0
+if
+    0038:   $MYTH_YETI_ENABLED == 1
+jf @BASE_HELP_YETI_1
+if
+    00FF:   actor $PLAYER_ACTOR sphere 1 in_sphere 360.8629 192.5564 1019.9912 radius 1.0 1.0 2.0 on_foot 
+jf @BASE_HELP_YETI_1
+054C: use_GXT_table 'XFILES'
+0512: show_permanent_text_box 'UNLYETI'  // Myth Unlocked: Yeti. The Yeti is a creature which inhabits Mount Chilliad. It does not use a weapon, and might be vulnerable to heat.
+wait 10000
+03E6: remove_text_box
+jump @BASE_HELP_YETI_1
+//---
+:BASE_HELP_LEATHERFACE
+wait 20000
+jump @BASE_HELP_LEATHERFACE_1
+
+:BASE_HELP_LEATHERFACE_1
+wait 0
+if
+    0038:   $MYTH_LEATHERFACE_ENABLED == 1
+jf @BASE_HELP_LEATHERFACE_1
+if
+    00FF:   actor $PLAYER_ACTOR sphere 1 in_sphere 360.8629 193.4969 1019.9912 radius 1.0 1.0 2.0 on_foot
+jf @BASE_HELP_LEATHERFACE_1
+054C: use_GXT_table 'XFILES'
+0512: show_permanent_text_box 'UNLLFC'
+wait 10000
+03E6: remove_text_box
+jump @BASE_HELP_LEATHERFACE_1
+
+//---
+
+:BASE_WEAPONS_VENDOR
+wait 20000
+jump @BASE_WEAPONS_VENDOR_1
+
+:BASE_WEAPONS_VENDOR_1
+wait 0
+Model.Load(#BMYMIB)
+Model.Load(#DESERT_EAGLE)
+if and
+    Model.Available(#BMYMIB)
+    Model.Available(#DESERT_EAGLE)
+jf @BASE_WEAPONS_VENDOR_1
+Actor.Create($WEAPONS_VENDOR, 23, #BMYMIB, 356.2978, 167.5988, 1008.3762)
+Actor.SetImmunities($WEAPONS_VENDOR, 1, 1, 1, 1, 1)
+0173: set_actor $WEAPONS_VENDOR Z_angle_to 271.0432
+0860: link_actor $WEAPONS_VENDOR to_interior 3
+09E8: $BASE_CURRENT_INTERIOR = actor $PLAYER_ACTOR active_interior
+wait 250
+04D7: set_actor $WEAPONS_VENDOR locked 1
+
+:BASE_WEAPONS_VENDOR_2
+wait 0
+if
+    8038:   not  $BASE_CURRENT_INTERIOR == 3
+jf @BASE_WEAPONS_VENDOR_3
+04D7: set_actor $WEAPONS_VENDOR locked 1
+09E8: $BASE_CURRENT_INTERIOR = actor $PLAYER_ACTOR active_interior
+jump @BASE_WEAPONS_VENDOR_2
+
+:BASE_WEAPONS_VENDOR_3
+wait 0
+04D7: set_actor $WEAPONS_VENDOR locked 0
+if and
+    0038:   $BASE_CURRENT_INTERIOR == 3
+    00FF:   actor $PLAYER_ACTOR sphere 0 in_sphere 358.236 167.5586 1008.3828 radius 1.0 1.0 2.0 on_foot
+jf @BASE_WEAPONS_VENDOR_2
+
+:MENU_WEAPONS_MASTER
+054C: use_GXT_table 'XFILES'
+08D4: $MENU_WEAPONS_MASTER = create_panel_with_title 'MNWPMS' position 29.0 145.0 width 220.0 columns 1 interactive 1 background 1 alignment 1
+08DB:  set_panel $MENU_WEAPONS_MASTER column 0 header 'MNWPM9' data 'MNWPML' 'MNWPPS' 'MNWPSB'  'MNWPAR' 'MNWPSG' 'MNWPEX' 'MNWPSP' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY'
+Player.CanMove($PLAYER_CHAR, False)                                 //Melee    Pistol    Subs    Assault  Shotgun  Explsvs    
+
+repeat
+wait  0 ms
+if 00E1:   player 0 pressed_key 15 
+then
+               08DA: remove_panel $MENU_WEAPONS_MASTER
+ 03E6: remove text box
+ Player.CanMove($PLAYER_CHAR, True)
+ jump @MENU_WEAPONS_MASTER_END
+end
+until 00E1:   player 0 pressed_key 16 
+
+08D7: $MENU_WEAPONS_MASTER_CHOICE = panel $MENU_WEAPONS_MASTER active_row
+08DA: remove_panel $MENU_WEAPONS_MASTER
+03E6: remove text box
+Player.CanMove($PLAYER_CHAR, True)
+
+if $MENU_WEAPONS_MASTER_CHOICE == 0  // Melee
+then
+//-    
+    08DA: remove_panel $MENU_WEAPONS_MASTER
+    wait 100
+    054C: use_GXT_table 'XFILES'
+    08D4: $MENU_WEAPONS_MELEE = create_panel_with_title 'MNWPMS' position 29.0 145.0 width 220.0 columns 1 interactive 1 background 1 alignment 1
+    08DB: set_panel $MENU_WEAPONS_MELEE column 0 header 'MNWPML' data 'MNWPM1' 'MNWPM2' 'MNWPM3'  'MNWPM4' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY'
+    Player.CanMove($PLAYER_CHAR, False)
+                                                                  //   Brass K   Knife   Katana    Chainsaw
+    repeat
+    wait  0 ms
+    if 00E1:   player 0 pressed_key 15 
+    then
+                   08DA: remove_panel $MENU_WEAPONS_MELEE
+     03E6: remove text box
+     jump @MENU_WEAPONS_MELEE_END
+        end
+        until 00E1:   player 0 pressed_key 16 
+
+    08D7: $MENU_WEAPONS_MELEE_CHOICE = panel $MENU_WEAPONS_MELEE active_row
+    08DA: remove_panel $MENU_WEAPONS_MELEE
+    03E6: remove text box
+    Player.CanMove($PLAYER_CHAR, True)
+
+    if $MENU_WEAPONS_MELEE_CHOICE == 0 // Brass Knuckles
+    then
+    Model.Load(#BRASSKNUCKLE)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 1 ammo 1 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 1
+    wait 100
+    Model.Destroy(#BRASSKNUCKLE)
+    end
+
+    if $MENU_WEAPONS_MELEE_CHOICE == 1 // Knife
+    then
+    Model.Load(#KNIFECUR)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 4 ammo 1 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 4
+    wait 100
+    Model.Destroy(#KNIFECUR) 
+    end
+    
+    if $MENU_WEAPONS_MELEE_CHOICE == 2 // Katana
+    then
+    Model.Load(#KATANA)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 8 ammo 1 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 8
+    wait 100
+    Model.Destroy(#KATANA) 
+    end
+    
+    if $MENU_WEAPONS_MELEE_CHOICE == 3 // Chainsaw
+    then
+    Model.Load(#CHNSAW)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 9 ammo 1 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 9
+    wait 100
+    Model.Destroy(#CHNSAW) 
+    end
+
+    :MENU_WEAPONS_MELEE_END
+    wait 100
+    jump @MENU_WEAPONS_MASTER
+//-
+end
+
+if $MENU_WEAPONS_MASTER_CHOICE == 1  // Pistols
+then
+//-
+    08DA: remove_panel $MENU_WEAPONS_MASTER
+    wait 100
+    054C: use_GXT_table 'XFILES'
+    08D4: $MENU_WEAPONS_PISTOLS = create_panel_with_title 'MNWPMS' position 29.0 145.0 width 220.0 columns 1 interactive 1 background 1 alignment 1
+    08DB: set_panel $MENU_WEAPONS_PISTOLS column 0 header 'MNWPPS' data 'MNWPP1' 'MNWPP2' 'MNWPP3'  'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY'
+    Player.CanMove($PLAYER_CHAR, False)
+                                                                  //   Pistol   Slc. Pis   DEagle
+    repeat
+    wait  0 ms
+    if 00E1:   player 0 pressed_key 15 
+    then
+                   08DA: remove_panel $MENU_WEAPONS_PISTOLS
+     03E6: remove text box
+     jump @MENU_WEAPONS_PISTOLS_END
+        end
+        until 00E1:   player 0 pressed_key 16 
+
+    08D7: $MENU_WEAPONS_PISTOLS_CHOICE = panel $MENU_WEAPONS_PISTOLS active_row
+    08DA: remove_panel $MENU_WEAPONS_PISTOLS
+    03E6: remove text box
+    Player.CanMove($PLAYER_CHAR, True)
+
+    if $MENU_WEAPONS_PISTOLS_CHOICE == 0 // Pistol
+    then
+    Model.Load(#COLT45)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 22 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 22
+    wait 100
+    Model.Destroy(#COLT45)
+    end
+
+    if $MENU_WEAPONS_PISTOLS_CHOICE == 1 // Silenced Pistol
+    then
+    Model.Load(#SILENCED)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 23 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 23
+    wait 100
+    Model.Destroy(#SILENCED) 
+    end
+    
+    if $MENU_WEAPONS_PISTOLS_CHOICE == 2 // Desert Eagle
+    then
+    Model.Load(#DESERT_EAGLE)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 24 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 24
+    wait 100
+    Model.Destroy(#DESERT_EAGLE) 
+    end
+
+    :MENU_WEAPONS_PISTOLS_END
+    wait 100
+    jump @MENU_WEAPONS_MASTER
+//- 
+end
+
+if $MENU_WEAPONS_MASTER_CHOICE == 2  // Submachine Guns
+then
+//-
+    08DA: remove_panel $MENU_WEAPONS_MASTER
+    wait 100
+    054C: use_GXT_table 'XFILES'
+    08D4: $MENU_WEAPONS_SUBS = create_panel_with_title 'MNWPMS' position 29.0 145.0 width 220.0 columns 1 interactive 1 background 1 alignment 1
+    08DB: set_panel $MENU_WEAPONS_SUBS column 0 header 'MNWPSB' data 'MNWPS1' 'MNWPS2' 'MNWPS3'  'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY'
+    Player.CanMove($PLAYER_CHAR, False)
+                                                                  
+    repeat
+    wait  0 ms
+    if 00E1:   player 0 pressed_key 15 
+    then
+                   08DA: remove_panel $MENU_WEAPONS_SUBS
+     03E6: remove text box
+     jump @MENU_WEAPONS_SUBS_END
+        end
+        until 00E1:   player 0 pressed_key 16 
+
+    08D7: $MENU_WEAPONS_SUBS_CHOICE = panel $MENU_WEAPONS_SUBS active_row
+    08DA: remove_panel $MENU_WEAPONS_SUBS
+    03E6: remove text box
+    Player.CanMove($PLAYER_CHAR, True)
+
+    if $MENU_WEAPONS_SUBS_CHOICE == 0 // Micro-Uzi
+    then
+    Model.Load(#MICRO_UZI)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 28 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 28
+    wait 100
+    Model.Destroy(#MICRO_UZI)
+    end
+
+    if $MENU_WEAPONS_SUBS_CHOICE == 1 // MP5
+    then
+    Model.Load(#MP5LNG)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 29 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 29
+    wait 100
+    Model.Destroy(#MP5LNG) 
+    end
+    
+    if $MENU_WEAPONS_SUBS_CHOICE == 2 // Tec-9
+    then
+    Model.Load(#TEC9)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 32 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 32
+    wait 100
+    Model.Destroy(#TEC9) 
+    end
+
+    :MENU_WEAPONS_SUBS_END
+    wait 100
+    jump @MENU_WEAPONS_MASTER
+//- 
+end
+
+if $MENU_WEAPONS_MASTER_CHOICE == 3  // Assault Rifles
+then
+//-
+    08DA: remove_panel $MENU_WEAPONS_MASTER
+    wait 100
+    054C: use_GXT_table 'XFILES'
+    08D4: $MENU_WEAPONS_ARS = create_panel_with_title 'MNWPMS' position 29.0 145.0 width 220.0 columns 1 interactive 1 background 1 alignment 1
+    08DB: set_panel $MENU_WEAPONS_ARS column 0 header 'MNWPAR' data 'MNWPA1' 'MNWPA2' 'MNWPA3'  'MNWPA4' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY'
+    Player.CanMove($PLAYER_CHAR, False)
+                                                                  
+    repeat
+    wait  0 ms
+    if 00E1:   player 0 pressed_key 15 
+    then
+                   08DA: remove_panel $MENU_WEAPONS_ARS
+     03E6: remove text box
+     jump @MENU_WEAPONS_ARS_END
+        end
+        until 00E1:   player 0 pressed_key 16 
+
+    08D7: $MENU_WEAPONS_ARS_CHOICE = panel $MENU_WEAPONS_ARS active_row
+    08DA: remove_panel $MENU_WEAPONS_ARS
+    03E6: remove text box
+    Player.CanMove($PLAYER_CHAR, True)
+
+    if $MENU_WEAPONS_ARS_CHOICE == 0 // AK-47
+    then
+    Model.Load(#AK47)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 30 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 30
+    wait 100
+    Model.Destroy(#AK47)
+    end
+
+    if $MENU_WEAPONS_ARS_CHOICE == 1 // M4
+    then
+    Model.Load(#M4)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 31 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 31
+    wait 100
+    Model.Destroy(#M4) 
+    end
+    
+    if $MENU_WEAPONS_ARS_CHOICE == 2 // Rifle
+    then
+    Model.Load(#CUNTGUN)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 33 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 33
+    wait 100
+    Model.Destroy(#CUNTGUN) 
+    end
+    
+    if $MENU_WEAPONS_ARS_CHOICE == 3 // Sniper Rifle
+    then
+    Model.Load(#SNIPER)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 34 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 34
+    wait 100
+    Model.Destroy(#SNIPER) 
+    end
+
+    :MENU_WEAPONS_ARS_END
+    wait 100
+    jump @MENU_WEAPONS_MASTER
+//- 
+end
+
+if $MENU_WEAPONS_MASTER_CHOICE == 4  // Shotguns
+then
+//-
+    08DA: remove_panel $MENU_WEAPONS_MASTER
+    wait 100
+    054C: use_GXT_table 'XFILES'
+    08D4: $MENU_WEAPONS_SHOTGUNS = create_panel_with_title 'MNWPMS' position 29.0 145.0 width 220.0 columns 1 interactive 1 background 1 alignment 1
+    08DB: set_panel $MENU_WEAPONS_SHOTGUNS column 0 header 'MNWPSG' data 'MNWPG1' 'MNWPG2' 'MNWPG3'  'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY'
+    Player.CanMove($PLAYER_CHAR, False)
+                                                                  
+    repeat
+    wait  0 ms
+    if 00E1:   player 0 pressed_key 15 
+    then
+                   08DA: remove_panel $MENU_WEAPONS_SHOTGUNS
+     03E6: remove text box
+     jump @MENU_WEAPONS_SHOTGUNS_END
+        end
+        until 00E1:   player 0 pressed_key 16 
+
+    08D7: $MENU_WEAPONS_SHOTGUNS_CHOICE = panel $MENU_WEAPONS_SHOTGUNS active_row
+    08DA: remove_panel $MENU_WEAPONS_SHOTGUNS
+    03E6: remove text box
+    Player.CanMove($PLAYER_CHAR, True)
+
+    if $MENU_WEAPONS_SHOTGUNS_CHOICE == 0 // Shotgun
+    then
+    Model.Load(#CHROMEGUN)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 25 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 25
+    wait 100
+    Model.Destroy(#CHROMEGUN)
+    end
+
+    if $MENU_WEAPONS_SHOTGUNS_CHOICE == 1 // Sawn-Off
+    then
+    Model.Load(#SAWNOFF)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 26 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 26
+    wait 100
+    Model.Destroy(#SAWNOFF) 
+    end
+    
+    if $MENU_WEAPONS_SHOTGUNS_CHOICE == 2 // Combat Shotgun
+    then
+    Model.Load(#SHOTGSPA)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 27 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 27
+    wait 100
+    Model.Destroy(#SHOTGSPA) 
+    end
+
+    :MENU_WEAPONS_SHOTGUNS_END
+    wait 100
+    jump @MENU_WEAPONS_MASTER
+//- 
+end
+
+if $MENU_WEAPONS_MASTER_CHOICE == 5  // Explosives
+then
+//-
+    08DA: remove_panel $MENU_WEAPONS_MASTER
+    wait 100
+    054C: use_GXT_table 'XFILES'
+    08D4: $MENU_WEAPONS_EXPLOSIVES = create_panel_with_title 'MNWPMS' position 29.0 145.0 width 220.0 columns 1 interactive 1 background 1 alignment 1
+    08DB: set_panel $MENU_WEAPONS_EXPLOSIVES column 0 header 'MNWPEX' data 'MNWPE1' 'MNWPE2' 'MNWPE3'  'MNWPE4' 'MNWPE5' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY'
+    Player.CanMove($PLAYER_CHAR, False)
+                                                                  
+    repeat
+    wait  0 ms
+    if 00E1:   player 0 pressed_key 15 
+    then
+                   08DA: remove_panel $MENU_WEAPONS_EXPLOSIVES
+     03E6: remove text box
+     jump @MENU_WEAPONS_EXPLOSIVES_END
+        end
+        until 00E1:   player 0 pressed_key 16 
+
+    08D7: $MENU_WEAPONS_EXPLOSIVES_CHOICE = panel $MENU_WEAPONS_EXPLOSIVES active_row
+    08DA: remove_panel $MENU_WEAPONS_EXPLOSIVES
+    03E6: remove text box
+    Player.CanMove($PLAYER_CHAR, True)
+
+    if $MENU_WEAPONS_EXPLOSIVES_CHOICE == 0 // Grenades
+    then
+    Model.Load(#GRENADE)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 16 ammo 50 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 16
+    wait 100
+    Model.Destroy(#GRENADE)
+    end
+
+    if $MENU_WEAPONS_EXPLOSIVES_CHOICE == 1 // Molotovs
+    then
+    Model.Load(#MOLOTOV)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 18 ammo 50 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 18
+    wait 100
+    Model.Destroy(#MOLOTOV) 
+    end
+    
+    if $MENU_WEAPONS_EXPLOSIVES_CHOICE == 2 // Rocket Launcher
+    then
+    Model.Load(#ROCKETLA)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 35 ammo 50 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 35
+    wait 100
+    Model.Destroy(#ROCKETLA) 
+    end
+    
+    if $MENU_WEAPONS_EXPLOSIVES_CHOICE == 3 // Heat-Seeker
+    then
+    Model.Load(#HEATSEEK)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 36 ammo 50 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 36
+    wait 100
+    Model.Destroy(#HEATSEEK) 
+    end
+    
+    if $MENU_WEAPONS_EXPLOSIVES_CHOICE == 4 // Satchels
+    then
+    Model.Load(#SATCHEL)
+    Model.Load(#BOMB)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 39 ammo 50 // Load the weapon model before using this
+    01B2: give_actor $PLAYER_ACTOR weapon 40 ammo 1 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 39
+    wait 100
+    Model.Destroy(#SATCHEL)
+    Model.Destroy(#BOMB) 
+    end
+
+    :MENU_WEAPONS_EXPLOSIVES_END
+    wait 100
+    jump @MENU_WEAPONS_MASTER
+//- 
+end
+
+if $MENU_WEAPONS_MASTER_CHOICE == 6  // Special
+then
+//-
+    08DA: remove_panel $MENU_WEAPONS_MASTER
+    wait 100
+    054C: use_GXT_table 'XFILES'
+    08D4: $MENU_WEAPONS_SHOTGUNS = create_panel_with_title 'MNWPMS' position 29.0 145.0 width 220.0 columns 1 interactive 1 background 1 alignment 1
+    08DB: set_panel $MENU_WEAPONS_SPECIALS column 0 header 'MNWPSP' data 'MNWPX1' 'MNWPX2' 'MNWPX3'  'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY'
+    Player.CanMove($PLAYER_CHAR, False)
+                                                                  
+    repeat
+    wait  0 ms
+    if 00E1:   player 0 pressed_key 15 
+    then
+                   08DA: remove_panel $MENU_WEAPONS_SPECIALS
+     03E6: remove text box
+     jump @MENU_WEAPONS_SPECIALS_END
+        end
+        until 00E1:   player 0 pressed_key 16 
+
+    08D7: $MENU_WEAPONS_SPECIALS_CHOICE = panel $MENU_WEAPONS_SPECIALS active_row
+    08DA: remove_panel $MENU_WEAPONS_SPECIALS
+    03E6: remove text box
+    Player.CanMove($PLAYER_CHAR, True)
+
+    if $MENU_WEAPONS_SPECIALS_CHOICE == 0 // Tear Gas
+    then
+    Model.Load(#TEARGAS)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 17 ammo 50 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 17
+    wait 100
+    Model.Destroy(#TEARGAS)
+    end
+
+    if $MENU_WEAPONS_SPECIALS_CHOICE == 1 // Flame Thrower
+    then
+    Model.Load(#FLAME)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 37 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 37
+    wait 100
+    Model.Destroy(#FLAME) 
+    end
+    
+    if $MENU_WEAPONS_SPECIALS_CHOICE == 2 // Fire Extinguisher
+    then
+    Model.Load(#FIRE_EX)
+    wait 100
+    01B2: give_actor $PLAYER_ACTOR weapon 42 ammo 500 // Load the weapon model before using this
+    01B9: set_actor $PLAYER_ACTOR armed_weapon_to 42
+    wait 100
+    Model.Destroy(#FIRE_EX) 
+    end
+    
+    :MENU_WEAPONS_SPECIALS_END
+    wait 100
+    jump @MENU_WEAPONS_MASTER
+//- 
+end
+
+:MENU_WEAPONS_MASTER_END
+wait 1000
+jump @BASE_WEAPONS_VENDOR_2
+//-
+end_thread
+
+//--- BASE TRANSPORT
+:BASE_TRANSPORT
+wait 20000
+jump @BASE_TRANSPORT_1
+
+:BASE_TRANSPORT_1
+wait 0
+if and
+    Player.Controllable($PLAYER_CHAR)
+    09E7:   player $PLAYER_CHAR not_frozen 
+    not Actor.Driving($PLAYER_ACTOR)
+    not Player.Wasted($PLAYER_CHAR)
+    8741:   not actor $PLAYER_ACTOR busted 
+    84AD:   not actor $PLAYER_ACTOR in_water 
+    8818:   not actor $PLAYER_ACTOR in_air
+    0ADC: "K" 
+jf @BASE_TRANSPORT_1
+Model.Load(#CELLPHONE)
+
+:BASE_TRANSPORT_2
+wait 0
+if
+    Model.Available(#CELLPHONE)
+jf @BASE_TRANSPORT_2
+0729: AS_actor $PLAYER_ACTOR hold_cellphone 1
+wait 2000
+054C: use_GXT_table 'XFILES' 
+0512: show_permanent_text_box 'TRSP01'
+
+:BASE_TRANSPORT_3
+wait 0
+if
+    00E1:   player 0 pressed_key 11 // If player presses Y
+jf @BASE_TRANSPORT_4
+jump @BASE_TRANSPORT_5
+
+:BASE_TRANSPORT_4
+wait 0
+if  
+    00E1:   player 0 pressed_key 10 // If player presses N
+jf @BASE_TRANSPORT_3
+03E6: remove_text_box 
+0729: AS_actor $PLAYER_ACTOR hold_cellphone 0
+wait 2000
+Model.Destroy(#CELLPHONE)
+jump @BASE_TRANSPORT_1
+
+:BASE_TRANSPORT_5
+wait 0
+03E6: remove_text_box 
+0729: AS_actor $PLAYER_ACTOR hold_cellphone 0
+wait 2000
+Model.Destroy(#CELLPHONE)
+Model.Load(#INFERNUS)
+Model.Load(#BMYMIB)
+04C4: store_coords_to $BASE_CAR_OFFSETX $BASE_CAR_OFFSETY $BASE_CAR_OFFSETZ from_actor $PLAYER_ACTOR with_offset 100.0 100.0 0.0 
+02C1: store_to $BASE_CAR_OFFSETX $BASE_CAR_OFFSETY $BASE_CAR_OFFSETZ car_path_coords_closest_to $BASE_CAR_OFFSETX $BASE_CAR_OFFSETY $BASE_CAR_OFFSETZ
+wait 100
+Car.Create($BASE_CAR, #INFERNUS, $BASE_CAR_OFFSETX, $BASE_CAR_OFFSETY, $BASE_CAR_OFFSETZ)
+0129: $BASE_CAR_DRIVER = create_actor_pedtype 23 model #BMYMIB in_car $BASE_CAR driverseat
+Car.SetImmunities($BASE_CAR, 1, 1, 1, 1, 1)
+Marker.CreateAboveCar($BASE_CAR_MARKER, $BASE_CAR)
+04C4: store_coords_to $BASE_CAR_OFFSETX $BASE_CAR_OFFSETY $BASE_CAR_OFFSETZ from_actor $PLAYER_ACTOR with_offset 0.0 1.0 0.0
+//02C1: store_to $BASE_CAR_OFFSETX $BASE_CAR_OFFSETY $BASE_CAR_OFFSETZ car_path_coords_closest_to $BASE_CAR_OFFSETX $BASE_CAR_OFFSETY $BASE_CAR_OFFSETZ
+Car.DriveTo($BASE_CAR, $BASE_CAR_OFFSETX, $BASE_CAR_OFFSETY, $BASE_CAR_OFFSETZ)
+
+:BASE_TRANSPORT_6
+wait 0
+if
+    0202:   actor $PLAYER_ACTOR near_car $BASE_CAR radius 5.0 5.0 flag 0 
+jf @BASE_TRANSPORT_6
+04BA: set_car $BASE_CAR speed_to 0.0
+01B4: set_player $PLAYER_CHAR can_move 0
+05CA: AS_actor $PLAYER_ACTOR enter_car $BASE_CAR passenger_seat 0 10000 ms
+
+:BASE_TRANSPORT_7
+wait 0
+if
+    00DB:   actor $PLAYER_ACTOR in_car $BASE_CAR
+jf @BASE_TRANSPORT_7
+//if
+//    8205:   not actor $PLAYER_ACTOR near_car $BASE_CAR 50.0 50.0 50.0 flag 0 
+//jf @BASE_TRANSPORT_7
+0AB6: store_target_marker_coords_to $BASE_CAR_TARGETX $BASE_CAR_TARGETY $BASE_CAR_TARGETZ // IF and SET
+02C1: store_to $BASE_CAR_TARGETX $BASE_CAR_TARGETY $BASE_CAR_TARGETZ car_path_coords_closest_to $BASE_CAR_TARGETX $BASE_CAR_TARGETY $BASE_CAR_TARGETZ
+Car.DriveTo($BASE_CAR, $BASE_CAR_TARGETX, $BASE_CAR_TARGETY, $BASE_CAR_TARGETZ) 
+Car.SetMaxSpeed($BASE_CAR, 20.0)
+00AE: set_car $BASE_CAR traffic_behaviour_to 2
+01B4: set_player $PLAYER_CHAR can_move 1
+
+:BASE_TRANSPORT_8
+wait 0
+if
+    01AD:   car $BASE_CAR sphere 0 near_point $BASE_CAR_TARGETX $BASE_CAR_TARGETY radius 5.0 5.0 
+jf @BASE_TRANSPORT_8 
+04BA: set_car $BASE_CAR speed_to 0.0
+05CD: AS_actor $PLAYER_ACTOR exit_car $BASE_CAR
+wait 5000
+Car.DriveTo($BASE_CAR, 0.0, 0.0, 0.0)
+wait 20000
+Actor.DestroyInstantly($BASE_CAR_DRIVER)
+Car.Destroy($BASE_CAR)
+Actor.RemoveReferences($BASE_CAR_DRIVER)
+Car.RemoveReferences($BASE_CAR)  
+jump @BASE_TRANSPORT_1
+
+//----------------------- BASE STARGATES
+
+:STARGATE_BASE
+wait 20000
+jump @STARGATE_BASE_1
+{
+GATE01: Stargate
+GATE02: Destinations
+GATE03: Grove Street
+GATE04: Whetstone
+GATE05: Area 69
+GATE06: Prospero H.Q.
+}
+
+:STARGATE_BASE_1
+wait 0
+if
+    00FF:   actor $PLAYER_ACTOR sphere 1 in_sphere -2525.9871 -621.4888 132.7344 radius 1.0 1.0 2.0 on_foot
+jf @STARGATE_BASE_1
+08D4: $STARGATE_MENU = create_panel_with_title 'GATE01' position 29.0 145.0 width 220.0 columns 1 interactive 1 background 1 alignment 1
+08DB:  set_panel $STARGATE_MENU column 0 header 'GATE02' data 'GATE03' 'GATE04' 'GATE05'  'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY' 'DUMMY'
+0AAC: $AUDIO_STARGATE_ACTIVATE = load_audiostream "audio\custom_audio\Stargate_Activate.mp3" //IF and SET
+0AAC: $AUDIO_STARGATE_LOCK = load_audiostream "audio\custom_audio\Stargate_Lock.mp3" //IF and SET
+0AAC: $AUDIO_STARGATE_OPEN = load_audiostream "audio\custom_audio\Stargate_Open.mp3" //IF and SET
+0AAC: $AUDIO_STARGATE_LOOP = load_audiostream "audio\custom_audio\Stargate_Loop.mp3" //IF and SET
+
+
+repeat
+wait  0 ms
+if 00E1:   player 0 pressed_key 15 
+    then
+               08DA: remove_panel $STARGATE_MENU
+               03E6: remove text box
+    jump @END
+end
+until 00E1:   player 0 pressed_key 16 
+
+08D7: $STARGATE_MENU_CHOICE = panel $STARGATE_MENU active_row
+08DA: remove_panel $STARGATE_MENU
+03E6: remove text box
+
+if $STARGATE_MENU_CHOICE == 0
+then
+0AAD: set_audiostream $AUDIO_STARGATE_ACTIVATE perform_action 1
+0AC0: loop_audiostream $AUDIO_STARGATE_ACTIVATE flag 0
+wait 1000
+0AAD: set_audiostream $AUDIO_STARGATE_LOCK perform_action 1
+0AC0: loop_audiostream $AUDIO_STARGATE_LOCK flag 0
+0107: $STARGATE_BASE_CHEVRON_ONE = create_object 1215 at -2533.83 -623.506 141.671
+wait 1000
+0AAD: set_audiostream $AUDIO_STARGATE_LOCK perform_action 1
+0AC0: loop_audiostream $AUDIO_STARGATE_LOCK flag 0
+0107: $STARGATE_BASE_CHEVRON_TWO = create_object 1215 at -2536.33 -623.506 138.771
+wait 1000
+0AAD: set_audiostream $AUDIO_STARGATE_LOCK perform_action 1
+0AC0: loop_audiostream $AUDIO_STARGATE_LOCK flag 0
+0107: $STARGATE_BASE_CHEVRON_THREE = create_object 1215 at -2536.53 -623.506 135.271
+wait 1000
+0AAD: set_audiostream $AUDIO_STARGATE_LOCK perform_action 1
+0AC0: loop_audiostream $AUDIO_STARGATE_LOCK flag 0
+0107: $STARGATE_BASE_CHEVRON_FOUR = create_object 1215 at -2525.73 -623.506 135.271
+wait 1000
+0AAD: set_audiostream $AUDIO_STARGATE_LOCK perform_action 1
+0AC0: loop_audiostream $AUDIO_STARGATE_LOCK flag 0
+0107: $STARGATE_BASE_CHEVRON_FIVE = create_object 1215 at -2525.93 -623.506 138.771
+wait 1000
+0AAD: set_audiostream $AUDIO_STARGATE_LOCK perform_action 1
+0AC0: loop_audiostream $AUDIO_STARGATE_LOCK flag 0
+0107: $STARGATE_BASE_CHEVRON_SIX = create_object 1215 at 2528.53 -623.506 141.671
+wait 1000
+0AAD: set_audiostream $AUDIO_STARGATE_LOCK perform_action 1
+0AC0: loop_audiostream $AUDIO_STARGATE_LOCK flag 0
+0107: $STARGATE_BASE_CHEVRON_SEVEN = create_object 1215 at -2531.23 -623.506 142.271
+wait 1000
+0AAD: set_audiostream $AUDIO_STARGATE_OPEN perform_action 1
+0AC0: loop_audiostream $AUDIO_STARGATE_OPEN flag 0
+064B: $STARGATE_WORMHOLE_HORIZON = create_particle "WATER_SPEED" at -2531.2363 -623.59 135.7473 type 1
+064C: make_particle $STARGATE_WORMHOLE_HORIZON visible
+wait 5000
+0AAD: set_audiostream $AUDIO_STARGATE_LOOP perform_action 1
+0AC0: loop_audiostream $AUDIO_STARGATE_LOOP flag 1
+
+:STARGATE_BASE_ENTRY_LOOP
+wait 0
+if
+    00FE:   actor $PLAYER_ACTOR sphere 0 in_sphere -2531.2363 -623.59 132.7473 radius 1.0 1.0 1.0
+jf @STARGATE_BASE_ENTRY_LOOP
+Actor.PutAt($PLAYER_ACTOR, 2429.4241, -1640.376, 13.4713)
+0173: set_actor $PLAYER_ACTOR Z_angle_to 180.0
+04E4: unknown_refresh_game_renderer_at 2429.4241 -1640.376 13.4713
+0108: destroy_object $STARGATE_BASE_CHEVRON_ONE
+0108: destroy_object $STARGATE_BASE_CHEVRON_TWO
+0108: destroy_object $STARGATE_BASE_CHEVRON_THREE
+0108: destroy_object $STARGATE_BASE_CHEVRON_FOUR
+0108: destroy_object $STARGATE_BASE_CHEVRON_FIVE
+0108: destroy_object $STARGATE_BASE_CHEVRON_SIX
+0108: destroy_object $STARGATE_BASE_CHEVRON_SEVEN
+01C4: remove_references_to_object $STARGATE_BASE_CHEVRON_ONE // This object will now disappear when the player looks away 
+01C4: remove_references_to_object $STARGATE_BASE_CHEVRON_TWO // This object will now disappear when the player looks away 
+01C4: remove_references_to_object $STARGATE_BASE_CHEVRON_THREE // This object will now disappear when the player looks away 
+01C4: remove_references_to_object $STARGATE_BASE_CHEVRON_FOUR // This object will now disappear when the player looks away 
+01C4: remove_references_to_object $STARGATE_BASE_CHEVRON_FIVE // This object will now disappear when the player looks away 
+01C4: remove_references_to_object $STARGATE_BASE_CHEVRON_SIX // This object will now disappear when the player looks away 
+01C4: remove_references_to_object $STARGATE_BASE_CHEVRON_SEVEN // This object will now disappear when the player looks away
+end
+
+{if $choice == 1
+then
+... 
+end}
+
+{
+Center of gate: -2531.2363 -623.59 132.7473
+}
+
+:END
+wait 1000
+jump @END
+
+//-----------------------Myths Threads-----------------------\\
+:MYTH_YETI
+wait 0
+    if and
+        0038:   $MYTH_YETI_ENABLED == 1
+        00FE:   actor $PLAYER_ACTOR sphere 0 in_sphere -2432.1804 -1618.5325 526.1999 radius 150.0 150.0 100.0
+    jf @MYTH_YETI
+023C: load_special_actor 'YETI' as 3 // models 290-299
+0AAC: $AUDIO_YETISONG = load_audiostream "audio\custom_audio\Yeti.mp3" //IF and SET
+
+:MYTH_YETI_1
+wait 0
+if
+023D:   special_actor 3 loaded
+jf @MYTH_YETI_1        
+Actor.Create($MYTH_YETI, 23, #SPECIAL03, -2432.1804, -1618.5325, 526.1999)                                          // Load the Yeti, set his
+Actor.SetImmunities($MYTH_YETI, 0, 0, 1, 0, 0)                                                                      // immunities and health, and
+0223: set_actor $MYTH_YETI health_to 20000                                                                          // tell it to kill the player.
+05E2: AS_actor $MYTH_YETI kill_actor $PLAYER_ACTOR                                                                  // He is EP, CP and MP
+0446: set_actor $MYTH_YETI immune_to_headshots 0
+04D8: set_actor $MYTH_YETI drowns_in_water 0
+0946: set_actor $MYTH_YETI actions_uninterupted_by_weapon_fire 1
+07FE: set_actor $MYTH_YETI fighting_style_to 5 0
+0245: set_actor $MYTH_YETI walk_style_to "OLDMAN"
+07BC: set_actor $MYTH_YETI decision_maker_to 32 // AS_pack_version
+0187: $MYTH_YETIDEBUG = create_marker_above_actor $MYTH_YETI  //-- DEBUG ONLY
+0AAD: set_audiostream $AUDIO_YETISONG perform_action 1
+0AC0: loop_audiostream $AUDIO_YETISONG flag 1
+
+:MYTH_YETI_2                                                                                                       // This will check whether the
+wait 0                                                                                                             // the player is in a large range
+    if                                                                                                             // of the Yeti, so that they do
+        8104:   not actor $PLAYER_ACTOR near_actor $MYTH_YETI radius 200.0 200.0 200.0 sphere 0                    // not get too far away and
+    jf @MYTH_YETI_3                                                                                                // glitch the thread. If the player
+04D7: set_actor $MYTH_YETI locked 1
+0AAD: set_audiostream $AUDIO_YETISONG 2                                                                            // is not in range, lock the Yeti 
+jump @MYTH_YETI_LOCK                                                                                               // and jump at the LOCK section. If
+                                                                                                                   // player IS in range, continue to _3
+:MYTH_YETI_3
+wait 0                                                                                                             // If Yeti has less than 20,000 health but more
+    if and                                                                                                             // than 10,000
+        8184:   not actor $MYTH_YETI health >= 10000                                                                   // then pick a number been 0-150. If
+        0184:   actor $MYTH_YETI health >= 5000                                                                        // this number is 1, then
+        80DF:   not actor $PLAYER_ACTOR driving
+    jf @MYTH_YETI_4                                                                                                    // execute the freeze ability. Else,
+0209: $MYTH_YETI_ABILITY_1_CHANCE = random_int_in_ranges 0 50                                                    // commence the next check. If the number
+    if                                                                                                                 // equals one, then the player will be locked
+        0038:   $MYTH_YETI_ABILITY_1_CHANCE == 1                                                                       // in mid-air for 5 seconds. The player will
+    jf  @MYTH_YETI_4                                                                                                   // then be unfrozen after 5 seconds.
+0669: $MYTH_YETIBLAST_YETI = attach_particle "CARWASHSPRAY" to_actor $MYTH_YETI with_offset 0.0 0.0 0.0 flag 1 
+0669: $MYTH_YETIBLAST_PLAYER = attach_particle "CARWASHSPRAY" to_actor $PLAYER_ACTOR with_offset 0.0 0.0 0.0 flag 1                                                                                                   
+064C: make_particle $MYTH_YETIBLAST_YETI visible 
+064C: make_particle $MYTH_YETIBLAST_PLAYER visible
+04D7: set_actor $PLAYER_ACTOR locked 1
+05E2: AS_actor $MYTH_YETI kill_actor $PLAYER_ACTOR
+wait 5000
+04D7: set_actor $PLAYER_ACTOR locked 0
+0650: destroy_particle $MYTH_YETIBLAST_YETI
+0650: destroy_particle $MYTH_YETIBLAST_PLAYER 
+064F: remove_references_to_particle $MYTH_YETIBLAST_YETI
+064F: remove_references_to_particle $MYTH_YETIBLAST_PLAYER
+05E2: AS_actor $MYTH_YETI kill_actor $PLAYER_ACTOR
+jump @MYTH_YETI_4
+
+:MYTH_YETI_4                                                                                                       // If the Yeti has less than
+wait 0                                                                                                             // 2500 health, then store it's
+    if                                                                                                                 // coordinates to variables.
+        8184:   not actor $MYTH_YETI health >= 5000                                                                    // Then do math and add and subtract
+    jf @MYTH_YETI_2
+    if
+        8118:   not actor $MYTH_YETI dead
+    jf @MYTH_YETI_END
+    if
+        80DF:   not actor $PLAYER_ACTOR driving
+    jf @MYTH_YETI_4
+
+0209: $MYTH_YETI_ABILITY_2_CHANCE = random_int_in_ranges 0 4
+    if
+        8038:   not  $MYTH_YETI_ABILITY_2_CHANCE == 1
+    jf @MYTH_YETI_ABILITY_2
+    05E2: AS_actor $MYTH_YETI kill_actor $PLAYER_ACTOR
+wait 2000
+jump @MYTH_YETI_4
+
+:MYTH_YETI_ABILITY_2
+04C4: store_coords_to $PLAYERX $PLAYERY $PLAYERZ from_actor $PLAYER_ACTOR with_offset 0.5 0.0 1.0
+05C5: AS_actor $MYTH_YETI cower 1000 ms
+04D7: set_actor $MYTH_YETI locked 1
+wait 1000
+00A1: put_actor $MYTH_YETI at $PLAYERX $PLAYERY $PLAYERZ
+04D7: set_actor $MYTH_YETI locked 0
+05E2: AS_actor $MYTH_YETI kill_actor $PLAYER_ACTOR
+jump @MYTH_YETI_4 
+
+:MYTH_YETI_LOCK
+wait 0
+    if
+        00F2:   actor $PLAYER_ACTOR near_actor $MYTH_YETI radius 200.0 200.0 200.0
+    jf @MYTH_YETI_LOCK
+04D7: set_actor $MYTH_YETI locked 0
+0AAD: set_audiostream $AUDIO_YETISONG perform_action 3
+05E2: AS_actor $MYTH_YETI kill_actor $PLAYER_ACTOR
+jump @MYTH_YETI_2
+
+:MYTH_YETI_END
+wait 0
+Actor.DestroyWithFade($MYTH_YETI)
+Actor.RemoveReferences($MYTH_YETI)
+0296: unload_special_actor 3
+054C: use_GXT_table 'XFILES'
+00BA: show_text_styled GXT 'YETIWIN' time 5000 style 2  // Yeti Vanquished
+0394: play_music 2
+0164: disable_marker $MYTH_YETI_MARKER
+0164: disable_marker $MYTH_YETIDEBUG //-- DEBUG ONLY
+0004: $MYTH_LEATHERFACE_ENABLED = 1
+0AAD: set_audiostream $AUDIO_YETISONG perform_action 0
+0AAE: release_audiostream $AUDIO_YETISONG
+end_thread
+
+
+//-----------
+:MYTH_LEATHERFACE
+wait 0
+    if and
+        0038:   $MYTH_LEATHERFACE_ENABLED == 1
+        00FE:   actor $PLAYER_ACTOR sphere 0 in_sphere 2138.4714 -96.8419 2.2607 radius 150.0 150.0 150.0
+    jf @MYTH_LEATHERFACE
+Model.Load(#CWMYHB1)
+Model.Load(#CHNSAW)
+0AAC: $AUDIO_LEATHERFACESONG = load_audiostream "audio\custom_audio\Leatherface.mp3" //IF and SET
+
+:MYTH_LEATHERFACE_1
+wait 0
+    if and
+        Model.Available(#CWMYHB1)
+        Model.Available(#CHNSAW)
+    jf @MYTH_LEATHERFACE    
+Actor.Create($MYTH_LEATHERFACE, 23, #CWMYHB1, 2162.2935, -100.763, 2.75) 
+0173: set_actor $MYTH_LEATHERFACE Z_angle_to 37.0                                        
+01B2: give_actor $MYTH_LEATHERFACE weapon 9 ammo 1 // Load the weapon model before using this                                           
+0223: set_actor $MYTH_LEATHERFACE health_to 20000                                                                          
+05E2: AS_actor $MYTH_LEATHERFACE kill_actor $PLAYER_ACTOR                                                                  
+0446: set_actor $MYTH_LEATHERFACE immune_to_headshots 0
+04D8: set_actor $MYTH_LEATHERFACE drowns_in_water 0
+0946: set_actor $MYTH_LEATHERFACE actions_uninterupted_by_weapon_fire 1
+07FE: set_actor $MYTH_LEATHERFACE fighting_style_to 5 0
+0245: set_actor $MYTH_LEATHERFACE walk_style_to "OLDMAN"
+07BC: set_actor $MYTH_LEATHERFACE decision_maker_to 32 // AS_pack_version
+0489: set_actor $MYTH_LEATHERFACE muted 1
+0187: $MYTH_LEATHERFACE_DEBUG = create_marker_above_actor $MYTH_LEATHERFACE  //-- DEBUG ONLY
+0AAD: set_audiostream $AUDIO_LEATHERFACESONG perform_action 1
+0AC0: loop_audiostream $AUDIO_LEATHERFACESONG flag 1
+
+:MYTH_LEATHERFACE_2
+wait 0
+    if
+        0104:   actor $PLAYER_ACTOR near_actor $MYTH_LEATHERFACE radius 200.0 200.0 200.0 sphere 0
+    jf @MYTH_LEATHERFACE_LOCK
+    if
+           8118:   not actor $MYTH_LEATHERFACE dead 
+    jf @MYTH_LEATHERFACE_END
+
+:MYTH_LEATHERFACE_ABILITY
+wait 0
+if
+       8184:   not actor $MYTH_LEATHERFACE health >= 10000
+jf @MYTH_LEATHERFACE_2
+0209: $MYTH_LEATHERFACE_ABILITY_1_CHANCE = random_int_in_ranges 0 20
+if
+    0038:   $MYTH_LEATHERFACE_ABILITY_1_CHANCE == 1
+jf @MYTH_LEATHERFACE_ABILITY_2
+05C5: AS_actor $MYTH_LEATHERFACE cower 2000 ms
+Actor.SetImmunities($MYTH_LEATHERFACE, 1, 1, 1, 1, 1)
+0669: $MYTH_LEATHERFACE_ABILITY_1_PARTICLE = attach_particle "BLOOD_HELI" to_actor $MYTH_LEATHERFACE with_offset 0.0 0.0 0.0 flag 0
+064C: make_particle $MYTH_LEATHERFACE_ABILITY_1_PARTICLE visible
+wait 2000
+05E2: AS_actor $MYTH_LEATHERFACE kill_actor $PLAYER_ACTOR 
+wait 5000
+Actor.SetImmunities($MYTH_LEATHERFACE, 0, 0, 0 ,0, 0)
+05E2: AS_actor $MYTH_LEATHERFACE kill_actor $PLAYER_ACTOR
+0976: destroy_particle $MYTH_LEATHERFACE_ABILITY_1_PARTICLE  
+064F: remove_references_to_particle $MYTH_LEATHERFACE_ABILITY_1_PARTICLE  
+jump @MYTH_LEATHERFACE_2
+
+:MYTH_LEATHERFACE_ABILITY_2
+05E2: AS_actor $MYTH_LEATHERFACE kill_actor $PLAYER_ACTOR
+wait 1000
+jump @MYTH_LEATHERFACE_2
+                                                                                                        
+:MYTH_LEATHERFACE_LOCK                                                                                          
+04D7: set_actor $MYTH_LEATHERFACE locked 1
+
+:MYTH_LEATHERFACE_LOCK_1
+wait 0
+    if
+        0104:   actor $PLAYER_ACTOR near_actor $MYTH_LEATHERFACE radius 200.0 200.0 200.0 sphere 0      
+    jf @MYTH_LEATHERFACE_LOCK_1
+04D7: set_actor $MYTH_LEATHERFACE locked 0
+jump @MYTH_LEATHERFACE_2
+
+:MYTH_LEATHERFACE_END
+Actor.DestroyWithFade($MYTH_LEATHERFACE)
+Actor.RemoveReferences($MYTH_LEATHERFACE)
+wait 1000
+Model.Destroy(#CHNSAW)
+Model.Destroy(#CWMYHB1)
+054C: use_GXT_table 'XFILES'
+00BA: show_text_styled GXT 'LHFCWIN' time 5000 style 2  // Leatherface Vanquished
+0394: play_music 2
+0164: disable_marker $MYTH_LEATHERFACE_MARKER
+0164: disable_marker $MYTH_LEATHERFACE_DEBUG //-- DEBUG ONLY
+0004: $MYTH_LIZARD_ENABLED = 1
+0AAD: set_audiostream $AUDIO_LEATHERFACESONG perform_action 0
+0AAE: release_audiostream $AUDIO_LEATHERFACESONG
+end_thread
+
+
+//-----------
+:MYTH_LIZARD
+wait 0
+    if and
+        0038:   $MYTH_LIZARD_ENABLED == 1
+        00FE:   actor $PLAYER_ACTOR sphere 0 in_sphere 2646.9641 2733.6877 10.8203 radius 150.0 150.0 150.0
+    jf @MYTH_LIZARD
+023C: load_special_actor 'LIZARD' as 1 // models 290-299
+0AAC: $AUDIO_LIZARDSONG = load_audiostream "audio\custom_audio\Lizard.mp3" //IF and SET
+
+:MYTH_LIZARD_1
+wait 0
+    if
+        Model.Available(#SPECIAL01)
+    jf @MYTH_LIZARD    
+Actor.Create($MYTH_LIZARD, 23, #SPECIAL01, 2591.8669, 2830.3833, 10.8203) 
+0173: set_actor $MYTH_LIZARD Z_angle_to 37.0                                                                              
+0223: set_actor $MYTH_LIZARD health_to 20000                                                                         
+05E2: AS_actor $MYTH_LIZARD kill_actor $PLAYER_ACTOR                                                                  
+0446: set_actor $MYTH_LIZARD immune_to_headshots 0
+04D8: set_actor $MYTH_LIZARD drowns_in_water 0
+0946: set_actor $MYTH_LIZARD actions_uninterupted_by_weapon_fire 1
+07FE: set_actor $MYTH_LIZARD fighting_style_to 6 6
+07BC: set_actor $MYTH_LIZARD decision_maker_to 32 // AS_pack_version
+0489: set_actor $MYTH_LIZARD muted 1
+0187: $MYTH_LIZARD_DEBUG = create_marker_above_actor $MYTH_LIZARD  //-- DEBUG ONLY
+0AAD: set_audiostream $AUDIO_LIZARDSONG perform_action 1
+0AC0: loop_audiostream $AUDIO_LIZARDSONG flag 1
+
+:MYTH_LIZARD_2
+wait 0
+    if
+        0104:   actor $PLAYER_ACTOR near_actor $MYTH_LIZARD radius 200.0 200.0 200.0 sphere 0
+    jf @MYTH_LIZARD_LOCK
+    if
+           8118:   not actor $MYTH_LIZARD dead 
+    jf @MYTH_LIZARD_END
+
+:MYTH_LIZARD_ABILITY
+wait 0
+if
+       8184:   not actor $MYTH_LIZARD health >= 10000
+jf @MYTH_LIZARD_2
+0209: $MYTH_LIZARD_ABILITY_1_CHANCE = random_int_in_ranges 0 20
+if
+    0038:   $MYTH_LIZARD_ABILITY_1_CHANCE == 1
+jf @MYTH_LIZARD_ABILITY_2
+// ABILITY HERE
+jump @MYTH_LIZARD_2
+
+:MYTH_LIZARD_ABILITY_2
+05E2: AS_actor $MYTH_LIZARD kill_actor $PLAYER_ACTOR
+wait 1000
+jump @MYTH_LIZARD_2
+                                                                                                        
+:MYTH_LIZARD_LOCK                                                                                          
+04D7: set_actor $MYTH_LIZARD locked 1
+
+:MYTH_LIZARD_LOCK_1
+wait 0
+    if
+        0104:   actor $PLAYER_ACTOR near_actor $MYTH_LIZARD radius 200.0 200.0 200.0 sphere 0      
+    jf @MYTH_LIZARD_LOCK_1
+04D7: set_actor $MYTH_LIZARD locked 0
+jump @MYTH_LIZARD_2
+
+:MYTH_LIZARD_END
+Actor.DestroyWithFade($MYTH_LIZARD)
+Actor.RemoveReferences($MYTH_LIZARD)
+wait 1000
+0296: unload_special_actor 1
+054C: use_GXT_table 'XFILES'
+00BA: show_text_styled GXT 'LZRDWIN' time 5000 style 2  // Lizard Vanquished
+0394: play_music 2
+0164: disable_marker $MYTH_LIZARD_MARKER
+0164: disable_marker $MYTH_LIZARD_DEBUG //-- DEBUG ONLY
+0004: $MYTH_SAMARA_ENABLED = 1
+0AAD: set_audiostream $AUDIO_LIZARDSONG perform_action 0
+0AAE: release_audiostream $AUDIO_LIZARDSONG
+end_thread
+
+//-----------------------Debug Threads-----------------------\\
+:DEBUG_MINIGUN  //-- DEBUG ONLY
+wait 10000
+jump @DEBUG_MINIGUN_1
+
+:DEBUG_MINIGUN_1
+wait 0
+    0ADC: test_cheat "DEBUG"
+jf @DEBUG_MINIGUN_1
+Model.Load(#KATANA)
+Model.Load(#MINIGUN)
+Model.Load(#DESERT_EAGLE)
+Model.Load(#M4)
+Model.Load(#MOLOTOV)
+Model.Load(#CAMERA)
+0004: $MYTH_YETI_ENABLED = 1 //-- DEBUG ONLY
+0004: $MYTH_LEATHERFACE_ENABLED = 1
+0004: $MYTH_LIZARD_ENABLED = 1
+//00A1: put_actor $PLAYER_ACTOR at 2162.2935 -100.763 2.75 
+
+:DEBUG_MINIGUN_2
+wait 0
+if
+    Model.Available(#KATANA)
+    Model.Available(#MINIGUN) 
+    Model.Available(#DESERT_EAGLE)
+    Model.Available(#M4) 
+    Model.Available(#MOLOTOV)
+    Model.Available(#CAMERA)                                                 
+jf @DEBUG_MINIGUN_2
+01B2: give_actor $PLAYER_ACTOR weapon 8 ammo 1 // Load the weapon model before using this
+01B2: give_actor $PLAYER_ACTOR weapon 38 ammo 99999 // Load the weapon model before using this
+01B2: give_actor $PLAYER_ACTOR weapon 24 ammo 99999 // Load the weapon model before using this
+01B2: give_actor $PLAYER_ACTOR weapon 31 ammo 99999 // Load the weapon model before using this
+01B2: give_actor $PLAYER_ACTOR weapon 18 ammo 99999 // Load the weapon model before using this
+01B2: give_actor $PLAYER_ACTOR weapon 43 ammo 99999 // Load the weapon model before using this
+wait 1000
+Model.Destroy(#KATANA)
+Model.Destroy(#MINIGUN)
+Model.Destroy(#DESERT_EAGLE)
+Model.Destroy(#M4)
+Model.Destroy(#MOLOTOV)
+Model.Destroy(#CAMERA)
+jump @DEBUG_MINIGUN_1
+
+//---
+
+:HUJINIS
+wait 20000
+jump @HUJINIS_1    
+
+:HUJINIS_1
+wait 0
+if
+    0ADC: cheat "HUJINI"
+jf @HUJINIS_1
+Model.Load(#BMYDRUG)
+Model.Load(#BMYDJ)
+Model.Load(#KATANA)
+Model.Load(#SNIPER)
+04C4: store_coords_to $HUJINIX $HUJINIY $HUJINIZ from_actor $PLAYER_ACTOR with_offset 0.0 5.0 1.0
+07AF: $HUJINIGANG = player $PLAYER_CHAR group 
+
+:HUJINIS_2
+wait 0
+if and
+    Model.Available(#BMYDRUG)
+    Model.Available(#BMYDJ)
+    Model.Available(#KATANA)
+    Model.Available(#SNIPER) 
+jf @HUJINIS_2
+Actor.Create($HA_HUJINI, 23, #BMYDRUG, $HUJINIX, $HUJINIY, $HUJINIZ)
+0223: set_actor $HA_HUJINI health_to 99999
+0631: put_actor $HA_HUJINI in_group $HUJINIGANG 
+0446: set_actor $HA_HUJINI immune_to_headshots 0
+04D8: set_actor $HA_HUJINI drowns_in_water 0
+01B2: give_actor $HA_HUJINI weapon 8 ammo 1 // Load the weapon model before using this 
+Actor.SetImmunities($HA_HUJINI, 1, 1, 1, 1, 1)
+02E2: set_actor $HA_HUJINI weapon_accuracy_to 100
+060F: set_actor $HA_HUJINI melee_accuracy_to 100
+
+0009: $HUJINIX += 1.0 
+Actor.Create($JA_HUJINI, 23, #BMYDJ, $HUJINIX, $HUJINIY, $HUJINIZ)
+0223: set_actor $JA_HUJINI health_to 99999
+0631: put_actor $JA_HUJINI in_group $HUJINIGANG 
+0446: set_actor $JA_HUJINI immune_to_headshots 0
+04D8: set_actor $JA_HUJINI drowns_in_water 0
+Actor.SetImmunities($JA_HUJINI, 1, 1, 1, 1, 1)
+02E2: set_actor $JA_HUJINI weapon_accuracy_to 100
+060F: set_actor $JA_HUJINI melee_accuracy_to 100.0 
+01B2: give_actor $JA_HUJINI weapon 34 ammo 99999 // Load the weapon model before using this
+
+:HUJINIS_3
+wait 0
+if
+    0ADC: cheat "DISMISS"
+jf @HUJINIS_3
+Actor.DestroyWithFade($HA_HUJINI)
+Actor.DestroyWithFade($JA_HUJINI)
+Actor.RemoveReferences($HA_HUJINI)
+Actor.RemoveReferences($JA_HUJINI)
+Model.Destroy(#BMYDRUG)
+Model.Destroy(#BMYDJ)
+Model.Destroy(#KATANA)
+Model.Destroy(#SNIPER)
+jump @HUJINIS_1
+
+//-------------Mission 0---------------
+// put your missions here
+
+
+
+//-------------External script 0---------------
+// put your external scripts here
+
+
+
+
+
+
+
+{
+___INFORMATION AREA___
+
+--MYTHS--
+    - Bigfoot (Bigfoot.txd, Bigfoot.dff)
+    - Yeti (Yeti.txd, Yeti.dff)
+    - Jason (Jason.txd, Jason.dff) 
+    - Samara (Samara.txd, Samara.dff)
+    - Piggsy (Piggsy.txd, Piggsy.dff)
+    - Lizard (Lizard.txd, Lizard.dff)
+    - Leatherface (Leatherface.txd, Leatherface.dff)
+}
