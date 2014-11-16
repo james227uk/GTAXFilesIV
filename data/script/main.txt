@@ -1073,6 +1073,7 @@ Car.RemoveReferences($BASE_CAR)
 jump @BASE_TRANSPORT_1
 
 //----------------------- BASE STARGATES
+//--Implementation of Stargates is pure and really should bee deprecated
 
 :STARGATE_BASE
 wait 20000
